@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SaidSo — receipts for AI answers</title>
+  <meta name="description" content="Seal what the AI said into a tamper-evident receipt. Anyone can check it later — no account, no server.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='6' y='3' width='20' height='26' rx='2' fill='%23f6f1e7' stroke='%231b1a17' stroke-width='2'/%3E%3Cpath d='M10 10h12M10 15h12M10 20h7' stroke='%231b1a17' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="#seal" aria-label="SaidSo home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">SaidSo</span>
+      <span class="brand-tag">receipts for AI answers</span>
+    </a>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <a role="tab" href="#seal" data-tab="seal">Seal</a>
+      <a role="tab" href="#verify" data-tab="verify">Verify</a>
+      <a role="tab" href="#mine" data-tab="mine">My receipts <span class="count" id="mine-count"></span></a>
+    </nav>
+  </header>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <main>
+    <!-- SEAL -->
+    <section id="view-seal" class="view" data-view="seal">
+      <div class="split">
+        <form id="seal-form" class="panel" novalidate>
+          <h1>Seal what the AI said</h1>
+          <p class="lede">Paste a question and the answer from any chatbot. SaidSo fingerprints both and signs them in your browser. Change one word later and the receipt breaks.</p>
+          <label>Question <span class="req">required</span>
+            <textarea name="question" rows="3" placeholder="What did you ask?"></textarea>
+          </label>
+          <label>Answer <span class="req">required</span>
+            <textarea name="answer" rows="7" placeholder="Paste the AI's answer exactly as you got it"></textarea>
+          </label>
+          <div class="row">
+            <label>Model <span class="req">required</span>
+              <input name="model" type="text" placeholder="Which AI, which version" autocomplete="off">
+            </label>
+            <label>Note <span class="opt">optional</span>
+              <input name="note" type="text" maxlength="200" placeholder="Where you used it" autocomplete="off">
+            </label>
+          </div>
+          <p class="form-error" id="seal-error" role="alert" hidden></p>
+          <div class="actions">
+            <button type="submit" class="primary" id="seal-btn">Seal receipt</button>
+            <button type="button" class="ghost" id="example-btn">Try an example</button>
+          </div>
+          <p class="fine" id="key-line"></p>
+        </form>
+        <div class="result" id="seal-result" aria-live="polite">
+          <div class="placeholder">
+            <div class="ghost-receipt" aria-hidden="true"></div>
+            <p>Your receipt appears here.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VERIFY -->
+    <section id="view-verify" class="view" data-view="verify" hidden>
+      <div class="split">
+        <div class="panel">
+          <h1>Check a receipt</h1>
+          <p class="lede">Open a verify link, or paste or drop a receipt file. Nothing is uploaded — the check runs here.</p>
+          <label>Receipt (link or JSON)
+            <textarea id="verify-input" rows="9" spellcheck="false" class="mono" placeholder="https://…/#r=…   or   { &quot;saidso&quot;: 1, … }"></textarea>
+          </label>
+          <div class="actions">
+            <button type="button" class="primary" id="verify-btn">Check</button>
+            <label class="ghost filebtn">Open .json file<input type="file" id="verify-file" accept=".json,application/json"></label>
+          </div>
+          <p class="fine">Tip: edit any word inside the JSON above — the verdict updates as you type.</p>
+
+          <div id="quote-box" class="quote" hidden>
+            <h2>Check a quote</h2>
+            <p class="lede">Someone shows you "what the AI said"? Paste their version and see every word that differs from the sealed answer.</p>
+            <textarea id="quote-input" rows="5" placeholder="Paste the text you were shown"></textarea>
+            <div id="quote-result" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="result" id="verify-result" aria-live="polite">
+          <div class="placeholder">
+            <div class="ghost-receipt" aria-hidden="true"></div>
+            <p>The verdict appears here.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MINE -->
+    <section id="view-mine" class="view" data-view="mine" hidden>
+      <div class="panel wide">
+        <h1>My receipts</h1>
+        <p class="lede">Receipts you sealed in this browser. They stay on this device; links and downloaded files work anywhere.</p>
+        <ul id="mine-list" class="mine"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="limits" id="limits">
+    <details>
+      <summary>What a receipt proves — and what it does not</summary>
+      <div class="cols">
+        <div>
+          <h3>Proves</h3>
+          <ul>
+            <li>The question, answer, model, time and note are exactly what was sealed. Any edit — even one character — is detected and named.</li>
+            <li>Every receipt with the same signer fingerprint was sealed by the same browser key.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Does not prove</h3>
+          <ul>
+            <li>That an AI really wrote the answer. SaidSo seals what you paste; only the AI provider could sign its own output.</li>
+            <li>The time. It is signed, but it comes from the sealer's clock.</li>
+            <li>Who the signer is. Compare the fingerprint with one the person shared with you.</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+    <p class="fine">SaidSo runs entirely in your browser. Open source, MIT. <a href="https://github.com/ttimesai-star/saidso">Source</a></p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "saidso",
+  "version": "0.1.0",
+  "description": "Tamper-evident receipts for AI answers. Seal what the AI said, check it later.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "node --test"
+  },
+  "engines": { "node": ">=22" }
+}
