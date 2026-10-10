@@ -1,0 +1,12 @@
+# personal learning context stays out of commits
+/devpost/learner-profile.md
+# local credentials
+.env
+.env.*
+!.env.example
+# installed skill pack copies (skills-lock.json records the install)
+/.agents/
+/agent/
+/.claude/
+node_modules/
+/video/raw/
