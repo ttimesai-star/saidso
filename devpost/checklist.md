@@ -60,7 +60,7 @@ Build mode: fast
 
 ## Code Tour and App Map
 
-- [ ] Learning wrap-up done and `devpost/app-map.html` generated
+- [ ] Learning wrap-up done and `devpost/app-map.html` generated (map generated 2026-10-10; the owner's short wrap-up and code-path walk-through are still open)
 
 ## Revisions
 - 2026-10-10: slices 1-4 were implemented in one working session and verified together: `npm test` (22 tests) plus a headless-browser run of the whole core journey (seal -> open link -> UNCHANGED -> edit one word in the JSON -> TAMPERED "answer changed after sealing" -> restore -> UNCHANGED; quote with two changed words -> "2 words differ"; garbage -> CAN'T READ; My receipts lists the receipt; dark mode and 390px mobile screenshots). Committed as one build commit instead of four.

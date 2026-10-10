@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SaidSo app map</title>
+<style>
+  :root { --bg:#f6f3ec; --ink:#1b1a17; --muted:#6b675e; --line:#d8d2c4; --card:#fffdf6; --ok:#1f7a4d; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#161513; --ink:#eeeae1; --muted:#a39e93; --line:#36342f; --card:#201f1c; } }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, sans-serif; }
+  main { max-width:960px; margin:0 auto; padding:24px 16px 48px; }
+  h1 { margin:0 0 4px; } .muted { color:var(--muted); }
+  .flow { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:20px 0; }
+  .box { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+  .box b { display:block; margin-bottom:4px; }
+  code { font-family:ui-monospace, Consolas, monospace; font-size:.9em; }
+  table { width:100%; border-collapse:collapse; margin-top:12px; }
+  td, th { text-align:left; padding:8px 6px; border-top:1px dashed var(--line); vertical-align:top; }
+  .arrow { color:var(--ok); font-weight:700; }
+</style>
+</head>
+<body>
+<main>
+  <h1>SaidSo: app map</h1>
+  <p class="muted">Where each part of the core journey lives in the code. Read it top to bottom to follow one receipt.</p>
+
+  <div class="flow">
+    <div class="box"><b>1. Seal form</b><code>index.html</code> #seal-form <span class="arrow">&rarr;</span> <code>app.js onSeal()</code></div>
+    <div class="box"><b>2. Key</b><code>keys.js getOrCreateKey()</code>: an Ed25519 pair saved in localStorage</div>
+    <div class="box"><b>3. Seal</b><code>receipt.js seal()</code>: normalise, SHA-256 of question and answer, then sign</div>
+    <div class="box"><b>4. Card + link</b><code>render.js receiptCard()</code>, <code>link.js encode()</code> &rarr; <code>#r=…</code></div>
+    <div class="box"><b>5. Verify</b><code>link.js decode()</code> &rarr; <code>receipt.js verify()</code> &rarr; <code>render.js stamp()</code></div>
+    <div class="box"><b>6. Check a quote</b><code>diff.js wordDiff()</code> &rarr; <code>render.js diffView()</code></div>
+  </div>
+
+  <table>
+    <tr><th>File</th><th>What it does</th><th>Tested by</th></tr>
+    <tr><td><code>src/receipt.js</code></td><td>Normalise, hash, sign, verify. Names what changed.</td><td><code>tests/receipt.test.js</code></td></tr>
+    <tr><td><code>src/keys.js</code></td><td>One signing key per browser.</td><td><code>tests/receipt.test.js</code> (key persists)</td></tr>
+    <tr><td><code>src/link.js</code></td><td>Receipt to and from the URL fragment. Refuses anything over 2 MB once decoded.</td><td><code>tests/link.test.js</code></td></tr>
+    <tr><td><code>src/diff.js</code></td><td>Word-by-word comparison for quotes.</td><td><code>tests/diff.test.js</code></td></tr>
+    <tr><td><code>src/store.js</code></td><td>My receipts list.</td><td><code>tests/store.test.js</code></td></tr>
+    <tr><td><code>src/render.js</code>, <code>src/app.js</code></td><td>Builds the page and wires the buttons. User text is only ever inserted as text, never as HTML.</td><td>headless browser run</td></tr>
+  </table>
+
+  <p class="muted">Try a change: in <code>src/receipt.js</code>, remove <code>.trim()</code> from <code>normalize()</code>, run <code>npm test</code>, and watch the copy-paste test fail. Then put it back.</p>
+</main>
+</body>
+</html>
