@@ -121,8 +121,10 @@ async function showSealed(r, v) {
       h('button', { type: 'button', onclick: () => { location.hash = frag; } }, 'Open verify page'),
       h('button', { type: 'button', onclick: () => window.print() }, 'Print'),
     ),
-    url.length > LINK_WARN_CHARS ? h('p', { class: 'fine', style: 'text-align:center' }, 'This link is very long; some chat apps cut long links. Share the .json file instead.') : null,
   );
+  if (url.length > LINK_WARN_CHARS) {
+    out.append(h('p', { class: 'fine', style: 'text-align:center' }, 'This link is very long; some chat apps cut long links. Share the .json file instead.'));
+  }
   if (window.innerWidth < 900) out.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
