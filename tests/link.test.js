@@ -24,3 +24,12 @@ test('decode rejects links without a receipt or with damage', async () => {
   const frag = await encode(await seal({ question: 'q', answer: 'a', model: 'm' }, key));
   await assert.rejects(decode(frag.slice(0, frag.length - 10)));
 });
+
+test('decode refuses a compressed payload that inflates past the cap', async () => {
+  const { MAX_DECODED_BYTES } = await import('../src/link.js');
+  const big = new TextEncoder().encode(' '.repeat(MAX_DECODED_BYTES + 10));
+  const s = new Blob([big]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+  const bytes = new Uint8Array(await new Response(s).arrayBuffer());
+  const { bytesToB64url } = await import('../src/b64.js');
+  await assert.rejects(decode('#r=' + bytesToB64url(bytes)), /too large/);
+});
