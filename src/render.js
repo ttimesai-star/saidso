@@ -23,7 +23,9 @@ export function formatTime(iso) {
 }
 
 /** Decorative barcode derived from the seal: same receipt, same bars. */
-function barsFor(hex) {
+function barsFor(raw) {
+  const hex = String(raw || '').replace(/[^0-9A-Fa-f]/g, ''); // only hex ever reaches the style attribute
+  if (!hex) return 'none';
   const stops = [];
   let x = 0;
   const total = hex.length * 3;

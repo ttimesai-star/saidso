@@ -102,3 +102,25 @@ test('key persists in storage', async () => {
   assert.equal(k1.publicKeyB64, k2.publicKeyB64);
   assert.equal(await fingerprint(k1.publicKeyB64), await fingerprint(k2.publicKeyB64));
 });
+
+test('control characters are stripped before hashing', async () => {
+  const r = await seal({ ...input, model: 'Mo\u0000del\u0007', note: 'a\u001bb' }, key);
+  assert.equal(r.model, 'Model');
+  assert.equal(r.note, 'ab');
+  assert.equal((await verify(r)).status, 'unchanged');
+});
+
+test('text edited and fingerprint recomputed -> both reasons', async () => {
+  const r = await seal(input, key);
+  const answer = 'No.';
+  const v = await verify({ ...r, answer, answer_sha256: await sha256Hex(answer), question: 'x' });
+  assert.equal(v.reasons[0], 'question changed after sealing');
+  assert.match(v.reasons[1], /seal does not match/);
+});
+
+test('signer replaced with a different valid-length key -> TAMPERED, not a crash', async () => {
+  const r = await seal(input, key);
+  const other = await getOrCreateKey(memoryStorage());
+  const v = await verify({ ...r, signer: other.publicKeyB64 });
+  assert.equal(v.status, 'tampered');
+});

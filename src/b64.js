@@ -9,11 +9,12 @@ export function bytesToB64url(bytes) {
 }
 
 export function b64urlToBytes(str) {
-  if (typeof str !== 'string' || !/^[A-Za-z0-9_-]*$/.test(str)) {
+  if (typeof str !== 'string' || !/^[A-Za-z0-9_-]*$/.test(str) || str.length % 4 === 1) {
     throw new Error('not base64url');
   }
   const b64 = str.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((str.length + 3) % 4);
-  const bin = atob(b64);
+  let bin;
+  try { bin = atob(b64); } catch { throw new Error('not base64url'); }
   const out = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
   return out;

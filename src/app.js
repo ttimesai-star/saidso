@@ -177,6 +177,7 @@ async function runVerify(text) {
     return;
   }
   await key();
+  if (seq !== verifySeq) return;
   const mine = v.signerFingerprint === myFingerprint;
   loaded = p.receipt;
   out.replaceChildren(

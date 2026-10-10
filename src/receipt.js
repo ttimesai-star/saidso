@@ -10,7 +10,11 @@ const subtle = () => globalThis.crypto.subtle;
 
 /** Unicode NFC, line endings to \n, outer whitespace trimmed. */
 export function normalize(text) {
-  return String(text ?? '').normalize('NFC').replace(/\r\n?/g, '\n').trim();
+  return String(text ?? '')
+    .normalize('NFC')
+    .replace(/\r\n?/g, '\n')
+    .replace(/[\x00-\x08\x0B-\x1F\x7F]/g, '') // control characters (keeps \t and \n)
+    .trim();
 }
 
 export async function sha256Hex(text) {
@@ -122,7 +126,11 @@ export async function verify(r) {
   }
   // If the text still matches its fingerprints but the seal fails, something signed was edited:
   // model, time, note, signer, the seal itself, or a fingerprint recomputed to hide a text edit.
-  if (!sigOk && reasons.length === 0) reasons.push('signed details changed after sealing (model, time, note or fingerprints)');
+  if (!sigOk) {
+    reasons.push(reasons.length === 0
+      ? 'signed details changed after sealing (model, time, note or fingerprints)'
+      : 'the seal does not match either (fingerprints were recomputed or the seal was replaced)');
+  }
   const status = reasons.length === 0 && sigOk ? 'unchanged' : 'tampered';
   return {
     status,

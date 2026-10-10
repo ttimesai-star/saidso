@@ -33,3 +33,9 @@ test('decode refuses a compressed payload that inflates past the cap', async () 
   const { bytesToB64url } = await import('../src/b64.js');
   await assert.rejects(decode('#r=' + bytesToB64url(bytes)), /too large/);
 });
+
+test('base64url of impossible length is rejected cleanly', async () => {
+  const { b64urlToBytes } = await import('../src/b64.js');
+  assert.throws(() => b64urlToBytes('abcde'), /not base64url/);
+  await assert.rejects(decode('#r=a'), /not base64url/);
+});
